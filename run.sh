@@ -20,30 +20,25 @@
 
 set -euo pipefail
 
-mkdir -p data figures
+mkdir -p data figs
 
 # ---------------------------------------------------------------------------
-# Step 1 — (re)generate raw data.
-#
-# For the three provided datasets, the CSVs are already committed — you do
-# not have to regenerate them. But if you want your pipeline to pull the
-# freshest version (e.g., for S&P 500), call a fetcher here. Example
-# (uvx is optional — plain `python scripts/fetch_sp500.py` works too if
-# you've already installed the deps):
-#
-#   uvx --with pandas --with lxml python scripts/fetch_sp500.py
-#
-# If you bring your own data, put the download / scrape / assemble step
-# here so a grader can reproduce it without any manual clicking.
+# Step 1 — raw data
+# data/sp500.csv is already committed; nothing to download.
 # ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
-# Step 2 — run the analysis and save the figure.
+# Step 2 — run the analysis and save the figure to figs/semantic_map.png
 #
-# Adapt the filename to whatever you named your submission. Again, `uvx`
-# is just for reproducibility — `marimo run submission.py ...` is fine
-# too if marimo is already installed.
+# submission.py carries PEP 723 inline metadata, so `uv run` installs its
+# own isolated environment automatically — no manual pip install needed.
+# If `uv` is not available, fall back to plain python (assumes deps are
+# already installed in the active environment).
 # ---------------------------------------------------------------------------
-uvx marimo run --sandbox submission.py --output figures/scatter.png
+if command -v uv &>/dev/null; then
+    uv run --script assignment2.py
+else
+    python assignment2.py
+fi
 
-echo "Done. See figures/scatter.png"
+echo "Done. See figs/semantic_map.png"
